@@ -19,5 +19,5 @@ from rwdata import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views.simple_upload),
+    path('',views.simple_upload, name="simple_upload"),
 ]

@@ -1,6 +1,6 @@
 from import_export import resources
-from .models import CataxDB
+from .models import CataxDBnew
 
-class CataxDBResource(resources.ModelResource):
+class CataxDBnewResource(resources.ModelResource):
     class meta:
-        model = CataxDB
+        model = CataxDBnew

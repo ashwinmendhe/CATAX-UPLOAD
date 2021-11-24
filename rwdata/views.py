@@ -1,6 +1,6 @@
-from django.shortcuts import render
-from .models import CataxDB
-from .resources import CataxDBResource
+from django.shortcuts import render,redirect
+from .models import CataxDBnew
+from .resources import CataxDBnewResource
 from django.contrib import messages
 from tablib import Dataset
 import openpyxl
@@ -9,20 +9,21 @@ import datetime
 # Create your views here.
 i = 1
 j = 1
-koinex1= 'koinex.xlsx' 
-koinex= 'Koinex - Trade Statement.xlsx' 
-zebpay = 'Zeb-Trade Statement.xlsx'
+newrow=0
+# koinex1= 'koinex.xlsx' 
+# koinex= 'Koinex - Trade Statement.xlsx' 
+# zebpay = 'Zeb-Trade Statement.xlsx'
 #-------------Koinex function---------------------------
-def Koinexmain(shRead1,row,column,sheets):
+def Koinexmain(shRead1,row,column,sheets,user_id,account_id):
     global i, j
     for i in range(1, row+1):
         for j in range(1,column+1):
             txnExchangeDateTime =shRead1.cell(i,1).value
             python_datetime='{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
     
-            accountID='koinexID'
+            accountID=account_id
             accountType = 'Exchange'
-            userID='userID'
+            userID=user_id
             txnEntryRoute='Import'
             feeCurrency = 'INR'
             txnVersion = '1.0'
@@ -32,7 +33,7 @@ def Koinexmain(shRead1,row,column,sheets):
             valuenew = shRead1.cell(i,j).value
             txnExchangeMemo = 'Success'
             totalValueofTransaction = shRead1.cell(i,6).value
-            
+            totalValueCurrency = 'INR'
             CurrencyName = whichcoin(shRead1.cell(i,2).value)
             exchangeTxnID = 'Null'
             
@@ -43,14 +44,14 @@ def Koinexmain(shRead1,row,column,sheets):
                 creditedCoins =  shRead1.cell(i,4).value
                 debitBaseAmount = shRead1.cell(i,5).value
                 
-                val=CataxDB(accountID=accountID,accountType = accountType,
-                    userID=userID, txnEntryRoute=txnEntryRoute,txnType = txnType,txnSubType= txnSubType,
+                val=CataxDBnew(accountID=accountID,accountType = accountType,
+                    userID=userID, txn=valuenew,txnEntryRoute=txnEntryRoute,txnType = txnType,txnSubType= txnSubType,
                     creditedCoins=creditedCoins,txnExchangeDate =txnExchangeDateTime,
                     debitBaseAmount=debitBaseAmount,txnExchangeMemo =txnExchangeMemo,
                     creditCurrency=CurrencyName,debitedFromAccountID=ExchangeName,feeCurrency = feeCurrency,
                     totalValueofTransaction = totalValueofTransaction,txnStatus = txnStatus,txnVersion =txnVersion,
                     toCryptoWallet=WhosWallet, createdOn = python_datetime,exchangeTxnID = exchangeTxnID, 
-                    txnHash=exchangeTxnID)
+                    txnHash=exchangeTxnID,totalValueCurrency = totalValueCurrency)
                 val.save()  
 
 #---------for Debit-------------------------------------------------                
@@ -61,14 +62,14 @@ def Koinexmain(shRead1,row,column,sheets):
                     debitCoins = shRead1.cell(i,4).value
                     creditBaseAmount = shRead1.cell(i,5).value                
                     
-                    val=CataxDB(accountID=accountID,accountType = accountType,
-                    userID=userID, txnEntryRoute=txnEntryRoute,txnType = txnType,txnSubType= txnSubType,
+                    val=CataxDBnew(accountID=accountID,accountType = accountType,
+                    userID=userID,txn=valuenew, txnEntryRoute=txnEntryRoute,txnType = txnType,txnSubType= txnSubType,
                         txnExchangeDate =txnExchangeDateTime,txnExchangeMemo =txnExchangeMemo,
                         debitCoins=debitCoins,creditBaseAmount=creditBaseAmount,
                         debitCurrency=CurrencyName,creditedToAccountID=ExchangeName,feeCurrency = feeCurrency,
                         totalValueofTransaction = totalValueofTransaction,txnStatus = txnStatus,txnVersion =txnVersion,
                         fromCryptoWallet=WhosWallet, createdOn = python_datetime,exchangeTxnID = exchangeTxnID, 
-                        txnHash=exchangeTxnID)
+                        txnHash=exchangeTxnID,totalValueCurrency = totalValueCurrency)
                     val.save()
 
 #-------------End---------------------------------------
@@ -76,18 +77,18 @@ def Koinexmain(shRead1,row,column,sheets):
 
 
 #-------------Zebpay function---------------------------
-def Zebmain(shRead1,row,column,sheet,length):
+def Zebmain(shRead1,row,column,sheet,length,user_id,account_id):
     global i, j
     for i in range(1, row+1):
         for j in range(1,column+1): 
             txnExchangeDateTime =shRead1.cell(i,1).value
             python_datetime='{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
             
-            accountID='ZebpayID'
+            accountID=account_id
             accountType = 'Exchange'
-            userID='userID'
+            userID=user_id
             txnEntryRoute='Import'
-            feeCurrency = 'Null'
+            feeCurrency = 'INR'
             txnVersion = '1.0'
             txnStatus = 'Processing'
             ExchangeName='Zebpay Exchange'
@@ -96,7 +97,7 @@ def Zebmain(shRead1,row,column,sheet,length):
             txnExchangeMemo = shRead1.cell(i,5).value
             #x = shRead1.cell(i,3).value * shRead1.cell(i,4).value
             #totalValueofTransaction = shRead1.cell(i,3).value * shRead1.cell(i,4).value
-        
+            totalValueCurrency = 'INR'
             CurrencyName = sheet[length]
             exchangeTxnID = shRead1.cell(i,9).value
 
@@ -107,14 +108,14 @@ def Zebmain(shRead1,row,column,sheet,length):
                 creditedCoins =  shRead1.cell(i,4).value               
                 debitBaseAmount = shRead1.cell(i,3).value
                 totalValueofTransaction = creditedCoins * debitBaseAmount
-                val=CataxDB(accountID=accountID,accountType = accountType,
-                    userID=userID, txnEntryRoute=txnEntryRoute,txnType = txnType,txnSubType= txnSubType,
+                val=CataxDBnew(accountID=accountID,accountType = accountType,
+                    userID=userID, txn=valuenew, txnEntryRoute=txnEntryRoute,txnType = txnType,txnSubType= txnSubType,
                     creditedCoins=creditedCoins,txnExchangeDate =txnExchangeDateTime,
                     txnExchangeMemo = txnExchangeMemo,debitBaseAmount =debitBaseAmount,
                     creditCurrency=CurrencyName,debitedFromAccountID=ExchangeName,feeCurrency = feeCurrency,
                     totalValueofTransaction = totalValueofTransaction,txnStatus = txnStatus,txnVersion = txnVersion,
                     toCryptoWallet=WhosWallet, createdOn = python_datetime, exchangeTxnID = exchangeTxnID, 
-                    txnHash=exchangeTxnID)
+                    txnHash=exchangeTxnID,totalValueCurrency = totalValueCurrency)
                 val.save()  
 
 #---------for Debit-------------------------------------------------                
@@ -125,15 +126,15 @@ def Zebmain(shRead1,row,column,sheet,length):
                     debitCoins = shRead1.cell(i,4).value              
                     creditBaseAmount = shRead1.cell(i,3).value 
                     totalValueofTransaction = debitCoins * creditBaseAmount
-                    val=CataxDB(accountID=accountID,accountType = accountType,
-                    userID=userID, txnEntryRoute=txnEntryRoute,txnType = txnType,txnSubType= txnSubType,
+                    val=CataxDBnew(accountID=accountID,accountType = accountType,
+                    userID=userID,txn=valuenew, txnEntryRoute=txnEntryRoute,txnType = txnType,txnSubType= txnSubType,
                         txnExchangeDate =txnExchangeDateTime,txnExchangeMemo = txnExchangeMemo,
                         debitCoins=debitCoins,creditBaseAmount=creditBaseAmount,
                         debitCurrency=CurrencyName,creditedToAccountID=ExchangeName,feeCurrency = feeCurrency,
                         totalValueofTransaction = totalValueofTransaction
                         ,txnStatus = txnStatus,txnVersion =txnVersion,
                         fromCryptoWallet=WhosWallet, createdOn = python_datetime, 
-                        exchangeTxnID = exchangeTxnID, txnHash=exchangeTxnID)
+                        exchangeTxnID = exchangeTxnID, txnHash=exchangeTxnID,totalValueCurrency = totalValueCurrency)
                     val.save()
 
 #-------------End---------------------------------------
@@ -274,17 +275,19 @@ def dataRead(new_data):
 #-------------End---------------------------------------
 
 #-------------Data Read--------------------------- 
-def dataRead1(new_data):
-    wbRead= openpyxl.load_workbook(new_data)    
+def dataRead1(new_data,user_id,account_id):
+    global newrow
+    wbRead= openpyxl.load_workbook(new_data)  
     sheets=wbRead.sheetnames
     shRead1= [0]*len(sheets)
     for length in range(len(sheets)):
         shRead1[length]= wbRead[sheets[length]]
         row = shRead1[length].max_row
         column = shRead1[length].max_column
-        Zebmain(shRead1[length],row,column,sheets,length)
+        newrow = newrow +row
+        Zebmain(shRead1[length],row,column,sheets,length,user_id,account_id)
         print('Succesfully uploaded Zebpay trade data: ', length)
-        #return shnew,row,column,sheets
+    return newrow
 #-------------End---------------------------------------
 
 
@@ -293,20 +296,29 @@ def simple_upload(request):
     global koinex,koinex1, zebpay
     if request.method == "POST":
         new_data = request.FILES['myfiles']
-        print(new_data)
-        if str(new_data) == zebpay:
-            dataRead1(new_data)
+        user_id=request.POST.get('id')
+        account_id=request.POST.get('Eid')
+        exchange_name=request.POST.get('exchange')
+ #--------------for zebpay-----------------------------------       
+        print(new_data,user_id,account_id,exchange_name)
+        if str(exchange_name) == 'zebpay':
+            count=dataRead1(new_data,user_id,account_id)
             #show = "all zebpay data successefully write"
-            print("all zebpay data successefully write")             
+            print("all zebpay data successefully write") 
+            return render(request,'result.html',{'res':count})
+ #--------------zebpay end----------------------------------- 
+  #--------------for koinex-----------------------------------                       
         else:
-            if str(new_data)==koinex or str(new_data)==koinex1:
+            if str(exchange_name)=='koinex':
                 shRead1,row,column,sheets=dataRead(new_data)
-                Koinexmain(shRead1,row,column,sheets)
+                Koinexmain(shRead1,row,column,sheets,user_id,account_id)
                 #show='Succesfully uploaded koinex trade data'
                 print('Succesfully uploaded koinex trade data')
+                return render(request,'result.html',{'res':row-1})
     #show = 'file upload successfully'        
     #return render(request, 'upload.html', {'abc':show})
+    
     return render(request, 'upload.html')
-
+ #--------------koinex end----------------------------------- 
 
 #-------------End---------------------------------------

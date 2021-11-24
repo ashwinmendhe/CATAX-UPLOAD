@@ -6,7 +6,7 @@ from django.db.models.fields import TextField
 import uuid
 
 # Create your models here.
-class CataxDB(models.Model):
+class CataxDBnew(models.Model):
     txnID = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     accountID = models.CharField(max_length=20)
     #accountType= models.IntegerField(default=0)
@@ -14,6 +14,7 @@ class CataxDB(models.Model):
     userID = models.CharField(max_length=20,blank=True)
     
     txnEntryRoute =models.CharField(max_length=10,blank=True)
+    txn=models.CharField(max_length=50,blank=True)
     txnType=models.CharField(max_length=10,blank=True, null=True)
     txnSubType=models.CharField(max_length=10,blank=True, null=True) 
     txnClaimedDateTime=models.CharField(max_length=50,blank=True, null=True)
