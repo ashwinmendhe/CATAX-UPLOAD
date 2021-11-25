@@ -18,7 +18,7 @@ class CataxDBnew(models.Model):
     txnType=models.CharField(max_length=10,blank=True, null=True)
     txnSubType=models.CharField(max_length=10,blank=True, null=True) 
     txnClaimedDateTime=models.CharField(max_length=50,blank=True, null=True)
-    txnExchangeDate=models.CharField(max_length=50,blank=True, null=True)
+    txnExchangeDate=models.CharField(max_length=100,blank=True, null=True)
     exchangeTxnID=models.CharField(max_length=5000,blank=True, null=True)
     
     fees =models.CharField(max_length=50,null=True)
