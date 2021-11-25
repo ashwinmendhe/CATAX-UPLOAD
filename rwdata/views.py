@@ -10,9 +10,9 @@ import datetime
 i = 1
 j = 1
 newrow=0
-# koinex1= 'koinex.xlsx' 
-# koinex= 'Koinex - Trade Statement.xlsx' 
-# zebpay = 'Zeb-Trade Statement.xlsx'
+
+
+
 #-------------binance----------------------------------
 def binancemain(shRead1,row,column,sheets,user_id,account_id):
     global i, j
@@ -325,33 +325,8 @@ def whichcoin(findcoin):
                            
 
 #-------------End---------------------------------------
-  
 #-------------Data Read--------------------------- 
-def dataRead(new_data):
-    wbRead= openpyxl.load_workbook(new_data)    
-    sheets=wbRead.sheetnames
-    shRead1= wbRead[sheets[0]]
-    row = shRead1.max_row
-    column = shRead1.max_column
-    return shRead1,row,column,sheets
-#-------------End---------------------------------------
-#-------------Data Read--------------------------- 
-def dataRead_b(new_data,user_id,account_id):
-    global newrow
-    wbRead= openpyxl.load_workbook(new_data)    
-    sheets=wbRead.sheetnames
-    #shRead1= [0]*len(sheets)
-    for length in range(len(sheets)):
-        if sheets[length] == 'Deposit History' or sheets[length] == 'Withdrawal History':
-            shRead1= wbRead[sheets[length]]
-            row = shRead1.max_row
-            column = shRead1.max_column
-            newrow = newrow +row
-            binancemain(shRead1,row,column,sheets[length],user_id,account_id)
-    return newrow             
-#-------------End---------------------------------------
-#-------------Data Read--------------------------- 
-def dataRead1(new_data,user_id,account_id):
+def dataRead_zebpay(new_data,user_id,account_id):
     global newrow
     wbRead= openpyxl.load_workbook(new_data)  
     sheets=wbRead.sheetnames
@@ -366,6 +341,51 @@ def dataRead1(new_data,user_id,account_id):
     return newrow
 #-------------End---------------------------------------
 
+#-------------Data Read--------------------------- 
+def dataRead_koinex(new_data):
+    wbRead= openpyxl.load_workbook(new_data)    
+    sheets=wbRead.sheetnames
+    shRead1= wbRead[sheets[0]]
+    row = shRead1.max_row
+    column = shRead1.max_column
+    return shRead1,row,column,sheets
+#-------------End---------------------------------------
+
+#-------------Data Read--------------------------- 
+def dataRead_binance(new_data,user_id,account_id):
+    global newrow
+    wbRead= openpyxl.load_workbook(new_data)    
+    sheets=wbRead.sheetnames
+    #shRead1= [0]*len(sheets)
+    for length in range(len(sheets)):
+        if sheets[length] == 'Deposit History' or sheets[length] == 'Withdrawal History':
+            shRead1= wbRead[sheets[length]]
+            row = shRead1.max_row
+            column = shRead1.max_column
+            newrow = newrow +row
+            binancemain(shRead1,row,column,sheets[length],user_id,account_id)
+    return newrow             
+#-------------End---------------------------------------
+
+#-------------Data Read--------------------------- 
+def dataRead_wzirx(new_data,user_id,account_id):
+    global newrow
+    wbRead= openpyxl.load_workbook(new_data)    
+    sheets=wbRead.sheetnames
+    #shRead1= [0]*len(sheets)
+    for length in range(len(sheets)):
+        if sheets[length] == 'Exchange Trades' or sheets[length] == 'Withdrawal History':
+            shRead1= wbRead[sheets[length]]
+            row = shRead1.max_row
+            column = shRead1.max_column
+            newrow = newrow +row
+            binancemain(shRead1,row,column,sheets[length],user_id,account_id)
+    return newrow   
+#-------------End---------------------------------------
+
+
+
+
 
 #-------------Main Coding Start here---------------------------  
 def simple_upload(request):
@@ -378,25 +398,31 @@ def simple_upload(request):
  #--------------for zebpay-----------------------------------       
         #print(new_data,user_id,account_id,exchange_name)
         if str(exchange_name) == 'zebpay':
-            count=dataRead1(new_data,user_id,account_id)
+            count=dataRead_zebpay(new_data,user_id,account_id)
             return render(request,'result.html',{'res':count})
  #--------------zebpay end----------------------------------- 
 #--------------for koinex-----------------------------------                       
         else:
             if str(exchange_name)=='koinex':
-                shRead1,row,column,sheets=dataRead(new_data)
+                shRead1,row,column,sheets=dataRead_koinex(new_data)
                 Koinexmain(shRead1,row,column,sheets,user_id,account_id)
                 return render(request,'result.html',{'res':row-1})
  #--------------koinex end----------------------------------- 
 #--------------for binance-----------------------------------          
             else:
                 if str(exchange_name)=='binance':
-                    count=dataRead_b(new_data,user_id,account_id)
+                    count=dataRead_binance(new_data,user_id,account_id)
                     print(exchange_name)
                     return render(request,'result.html',{'res':count})
-                
+#--------------binance end----------------------------------- 
+#--------------for wazirx-----------------------------------                 
+                else:
+                    if str(exchange_name) == 'wzirx':
+                        count=dataRead_wzirx(new_data,user_id,account_id)
+                        return render(request,'result.html',{'res':count})
+#--------------wzirx end-----------------------------------                 
     return render(request, 'upload.html')
-#--------------binance end-----------------------------------  
+ 
 
 
 #-------------End---------------------------------------
