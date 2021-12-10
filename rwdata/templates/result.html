@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catax</title>
-</head>
-<body>
-    <h1>file upload successfully</h1><br>
+{% extends 'base.html'%}
+
+
+{%block content%}
+
+<h1>file upload successfully</h1><br>
     <h1>And Total transaction uploaded is {{res}} </h1>
     <a href="{% url 'simple_upload' %}" class="ml-2">Back</a>
-</body>
-</html>
+
+{%endblock%}
+
