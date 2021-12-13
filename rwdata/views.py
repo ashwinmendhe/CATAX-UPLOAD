@@ -619,7 +619,7 @@ def Zebmain(shRead1,row,column,sheet,length,user_id,account_id):
         exchangeTxnID = shRead1.cell(i,9).value
 
 #---------for credit-------------------------------------------------
-        if valuenew == 'Buy' or valuenew == 'Recieve' or valuenew == 'Internal Recieve' or valuenew == 'Welcome':
+        if valuenew == 'Buy' or valuenew == 'Recieve' or valuenew == 'Internal Recieve' or valuenew == 'Welcome' or valuenew =='Sell Cancel':
             txnType = 'Credit'
             txnSubType=credit(valuenew)
             creditedCoins =  shRead1.cell(i,4).value               
@@ -631,11 +631,11 @@ def Zebmain(shRead1,row,column,sheet,length,user_id,account_id):
             txnExchangeMemo = txnExchangeMemo,debitBaseAmount =debitBaseAmount,creditCurrency=CurrencyName,
             creditedToAccountID=ExchangeName,feeCurrency = feeCurrency,totalValueofTransaction = totalValueofTransaction,
             txnStatus = txnStatus,txnVersion = txnVersion,toCryptoWallet=WhosWallet,
-            exchangeTxnID = exchangeTxnID,totalValueCurrency = totalValueCurrency)
+            exchangeTxnID = exchangeTxnID,totalValueCurrency = totalValueCurrency,debitBaseCurrency=CurrencyName)
             val.save()  
 
 #---------for Debit-------------------------------------------------                
-        elif valuenew == 'Sell' or valuenew == 'Send' or valuenew == 'Internal Send' or valuenew =='Sell Cancel':
+        elif valuenew == 'Sell' or valuenew == 'Send' or valuenew == 'Internal Send':
             txnType = 'Debit'
             txnSubType=debit(valuenew) 
             debitCoins = shRead1.cell(i,4).value              
@@ -647,7 +647,7 @@ def Zebmain(shRead1,row,column,sheet,length,user_id,account_id):
             debitCoins=debitCoins,creditBaseAmount=creditBaseAmount,debitCurrency=CurrencyName,
             debitedFromAccountID=ExchangeName,feeCurrency = feeCurrency,totalValueofTransaction = totalValueofTransaction,
             txnStatus = txnStatus,txnVersion =txnVersion,fromCryptoWallet=WhosWallet, 
-            exchangeTxnID = exchangeTxnID,totalValueCurrency = totalValueCurrency)
+            exchangeTxnID = exchangeTxnID,totalValueCurrency = totalValueCurrency,creditBaseCurrency=CurrencyName)
             val.save()
 
 #-------------End---------------------------------------
@@ -691,44 +691,27 @@ def crypto1n2(bothcrypto):
 #-------------credit function---------------------------
 def credit(typecredit):
     if typecredit == 'BUY' or typecredit == 'Buy':
-        txnSubType = 'Buy'
-        
-        return txnSubType
-    else:
-        if typecredit == 'Recieve':
-            txnSubType = 'deposit'
-            return txnSubType
-            #shWrite1['G{}'.format(i)].value = 'Deposite'        
-        else: 
-            if typecredit == 'Welcome':
-                txnSubType = 'Reward'
-                return txnSubType
-            else:
-                if typecredit == 'Internal Recieve':
-                    txnSubType = 'deposit'
-                    return txnSubType
-                
-           
+        return 'Buy'
+    elif typecredit == 'Recieve':
+        return 'deposit'      
+    elif typecredit == 'Welcome':
+        return 'Reward'
+    elif typecredit == 'Internal Recieve':
+        return'deposit'
+    elif typecredit == 'Sell Cancel':
+        return 'Sell Cancel'
+                   
 #-------------End---------------------------------------
 
 
 #-------------Debit function---------------------------
 def debit(typedebit):
     if typedebit == 'Send':
-        txnSubType =  'Transfer'
-        return txnSubType    
-    else:
-        if typedebit == 'SELL' or typedebit == 'Sell':
-            txnSubType =  'Sell'
-            return txnSubType   
-        else:
-            if typedebit == 'Sell Cancel':
-             txnSubType =  'Sell'
-             return txnSubType
-            else:
-               if typedebit == 'Internal Send':
-                txnSubType =  'Transfer'
-                return txnSubType      
+        return 'Transfer'  
+    elif typedebit == 'SELL' or typedebit == 'Sell':
+        return 'Sell'   
+    elif typedebit == 'Internal Send':
+        return 'Transfer'
 
 #-------------End---------------------------------------
 
@@ -901,7 +884,6 @@ def simple_upload(request):
             count=dataRead_coindcx(new_data,user_id,account_id)
             return render(request,'result.html',{'res':count-1}) 
 #--------------coindcx end------------------------------------  
-
 #--------------for Buyucoin-----------------------------------             
         elif str(exchange_name) == 'buyucoin':
             count=dataRead_buyucoin(new_data,user_id,account_id)

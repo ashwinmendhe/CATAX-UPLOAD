@@ -89,17 +89,17 @@ DATABASES = {
 # db_from_env = dj_database_url.config(conn_max_age=600)
 # DATABASES['default'].update(db_from_env)
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'catax-dev3',
-#         'USER': 'ashwin',
-#         'PASSWORD':'password',
-#         'HOST': '101.53.132.174',
-#         'PORT': '5432',
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'catax-dev3',
+        'USER': 'ashwin',
+        'PASSWORD':'password',
+        'HOST': '101.53.132.174',
+        'PORT': '5432',
         
-#     }
-# }
+    }
+}
 
 # DATABASES = {
 #     'default': {

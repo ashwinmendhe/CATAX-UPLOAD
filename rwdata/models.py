@@ -17,7 +17,7 @@ class CataxDBnew(models.Model):
     txnEntryRoute =models.CharField(max_length=10,blank=True)
     txn=models.CharField(max_length=20,blank=True)
     txnType=models.CharField(max_length=10,blank=True, null=True)
-    txnSubType=models.CharField(max_length=10,blank=True, null=True) 
+    txnSubType=models.CharField(max_length=20,blank=True, null=True) 
     txnClaimedDateTime=models.DateTimeField(null=True, blank=True)
     txnExchangeDate=models.CharField(max_length=100,null=True, blank=True)
     exchangeTxnID=models.CharField(max_length=500,blank=True, null=True)
